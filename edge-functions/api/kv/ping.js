@@ -4,9 +4,9 @@ const jsonResponse = (data, status = 200) =>
     headers: { "content-type": "application/json; charset=utf-8" }
   });
 
-export async function onRequest() {
+export async function onRequest({ request, params, env }) {
   try {
-    const value = await nav.get("__kv_ping__");
+    const value = await nav.get("test");
     return jsonResponse({ ok: true, sample: value ?? null });
   } catch (error) {
     return jsonResponse(
