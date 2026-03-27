@@ -4,39 +4,13 @@ const jsonResponse = (data, status = 200) =>
     headers: { "content-type": "application/json; charset=utf-8" }
   });
 
-const KV_NAME = "nav";
-const getKv = (env) => env?.[KV_NAME] ?? env?.nav ?? env?.NAV ?? globalThis?.[KV_NAME] ?? globalThis?.nav ?? globalThis?.NAV;
-
-const hasKv = (kv) => kv && typeof kv.get === "function" && typeof kv.put === "function";
-
-export async function onRequest({ env }) {
-  const kv = getKv(env);
-  const envKeys = env ? Object.keys(env) : [];
-
-  const result = {
-    envKeys,
-    hasEnvNav: Boolean(env?.nav),
-    hasEnvNAV: Boolean(env?.NAV),
-    hasGlobalNav: Boolean(globalThis.nav),
-    hasGlobalNAV: Boolean(globalThis.NAV),
-    kvDetected: Boolean(kv),
-    kvUsable: hasKv(kv)
-  };
-
-  if (!kv) {
-    return jsonResponse({ ...result, error: "KV_NOT_BOUND" }, 503);
-  }
-
+export async function onRequest() {
   try {
-    const value = await kv.get("__kv_ping__");
-    return jsonResponse({ ...result, ping: "ok", sample: value ?? null });
+    const value = await nav.get("__kv_ping__");
+    return jsonResponse({ ok: true, sample: value ?? null });
   } catch (error) {
     return jsonResponse(
-      {
-        ...result,
-        ping: "error",
-        message: error?.message ?? String(error)
-      },
+      { error: "KV_ERROR", message: error?.message ?? String(error) },
       500
     );
   }

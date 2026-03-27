@@ -7,11 +7,6 @@ const jsonResponse = (data, status = 200) =>
     headers: { "content-type": "application/json; charset=utf-8" }
   });
 
-const KV_NAME = "nav";
-const getKv = (env) => env?.[KV_NAME] ?? env?.nav ?? env?.NAV ?? globalThis?.[KV_NAME] ?? globalThis?.nav ?? globalThis?.NAV;
-
-const hasKv = (kv) => kv && typeof kv.get === "function" && typeof kv.put === "function";
-
 const generatePassword = () => {
   try {
     const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -24,22 +19,17 @@ const generatePassword = () => {
   }
 };
 
-export async function onRequest({ env }) {
+export async function onRequest() {
   try {
-    const kv = getKv(env);
-    if (!hasKv(kv)) {
-      return jsonResponse({ error: "KV_NOT_BOUND" }, 503);
-    }
-
-    let password = await kv.get(ADMIN_PASSWORD_KEY);
-    let isDefault = (await kv.get(ADMIN_DEFAULT_KEY)) === "1";
+    let password = await nav.get(ADMIN_PASSWORD_KEY);
+    let isDefault = (await nav.get(ADMIN_DEFAULT_KEY)) === "1";
     let bootstrapPassword = "";
 
     if (!password) {
       password = generatePassword() ?? "123456";
       isDefault = password === "123456";
-      await kv.put(ADMIN_PASSWORD_KEY, password);
-      await kv.put(ADMIN_DEFAULT_KEY, isDefault ? "1" : "0");
+      await nav.put(ADMIN_PASSWORD_KEY, password);
+      await nav.put(ADMIN_DEFAULT_KEY, isDefault ? "1" : "0");
       bootstrapPassword = password;
     }
 
@@ -55,7 +45,7 @@ export async function onRequest({ env }) {
     return jsonResponse(response);
   } catch (error) {
     return jsonResponse(
-      { error: "INTERNAL_ERROR", message: error?.message ?? String(error) },
+      { error: "KV_ERROR", message: error?.message ?? String(error) },
       500
     );
   }

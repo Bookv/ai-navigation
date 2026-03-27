@@ -7,11 +7,6 @@ const jsonResponse = (data, status = 200) =>
     headers: { "content-type": "application/json; charset=utf-8" }
   });
 
-const KV_NAME = "nav";
-const getKv = (env) => env?.[KV_NAME] ?? env?.nav ?? env?.NAV ?? globalThis?.[KV_NAME] ?? globalThis?.nav ?? globalThis?.NAV;
-
-const hasKv = (kv) => kv && typeof kv.get === "function" && typeof kv.put === "function";
-
 const readBody = async (request) => {
   try {
     return await request.json();
@@ -20,13 +15,8 @@ const readBody = async (request) => {
   }
 };
 
-export async function onRequest({ request, env }) {
+export async function onRequest({ request }) {
   try {
-    const kv = getKv(env);
-    if (!hasKv(kv)) {
-      return jsonResponse({ error: "KV_NOT_BOUND" }, 503);
-    }
-
     if (request.method.toUpperCase() !== "POST") {
       return jsonResponse({ error: "METHOD_NOT_ALLOWED" }, 405);
     }
@@ -39,7 +29,7 @@ export async function onRequest({ request, env }) {
       return jsonResponse({ error: "PASSWORD_TOO_SHORT" }, 400);
     }
 
-    const stored = await kv.get(ADMIN_PASSWORD_KEY);
+    const stored = await nav.get(ADMIN_PASSWORD_KEY);
     if (!stored) {
       return jsonResponse({ error: "PASSWORD_NOT_SET" }, 428);
     }
@@ -48,13 +38,13 @@ export async function onRequest({ request, env }) {
       return jsonResponse({ error: "INVALID_PASSWORD" }, 401);
     }
 
-    await kv.put(ADMIN_PASSWORD_KEY, newPassword);
-    await kv.put(ADMIN_DEFAULT_KEY, "0");
+    await nav.put(ADMIN_PASSWORD_KEY, newPassword);
+    await nav.put(ADMIN_DEFAULT_KEY, "0");
 
     return jsonResponse({ ok: true });
   } catch (error) {
     return jsonResponse(
-      { error: "INTERNAL_ERROR", message: error?.message ?? String(error) },
+      { error: "KV_ERROR", message: error?.message ?? String(error) },
       500
     );
   }
