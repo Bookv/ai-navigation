@@ -1,0 +1,12 @@
+﻿version: "3.9"
+services:
+  nav:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      NAV_TITLE: "我的导航"
+      NAV_DESCRIPTION: "一站式入口"
+      NAV_THEME: "auto"
+      NAV_SEARCH_ENGINES_JSON: "[{\"name\":\"Google\",\"url\":\"https://www.google.com/search?q={query}\"},{\"name\":\"Bing\",\"url\":\"https://www.bing.com/search?q={query}\"}]"
+      NAV_GROUPS_JSON: "[]"

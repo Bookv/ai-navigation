@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>个人导航</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg"></div>
+    <header class="hero">
+      <div class="brand">
+        <div class="logo">NAV</div>
+        <div>
+          <h1 id="site-title">个人导航</h1>
+          <p id="site-desc">简约现代导航站</p>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="search-wrap">
+          <input
+            id="search-input"
+            type="search"
+            placeholder="搜索站内链接或回车直接外部搜索"
+            autocomplete="off"
+          />
+          <select id="engine-select" aria-label="搜索引擎"></select>
+          <button id="search-btn" type="button">搜索</button>
+        </div>
+        <div class="toggle-wrap">
+          <button id="theme-toggle" type="button" class="ghost">主题</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="groups" class="groups"></section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
