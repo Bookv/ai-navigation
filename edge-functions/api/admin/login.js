@@ -6,7 +6,7 @@ const jsonResponse = (data, status = 200) =>
     headers: { "content-type": "application/json; charset=utf-8" }
   });
 
-const getKv = (env) => env?.nav ?? env?.NAV ?? globalThis.nav ?? globalThis.NAV;
+const KV_NAME = "nav";\nconst getKv = (env) => env?.[KV_NAME] ?? env?.nav ?? env?.NAV ?? globalThis?.[KV_NAME] ?? globalThis?.nav ?? globalThis?.NAV;
 
 const hasKv = (kv) => kv && typeof kv.get === "function";
 
