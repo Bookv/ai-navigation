@@ -6,10 +6,10 @@ const jsonResponse = (data, status = 200) =>
 
 export async function onRequest({ request, params, env }) {
   try {
-    const visitCount = await nav.get('visitCount');
+    const visitCount = await my_nav.get('visitCount');
     let visitCountInt = Number(visitCount);
     visitCountInt += 1;
-    await nav.put('visitCount', visitCountInt.toString());
+    await my_nav.put('visitCount', visitCountInt.toString());
 
     const res = JSON.stringify({
       visitCount: visitCountInt,
