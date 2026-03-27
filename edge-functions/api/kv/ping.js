@@ -6,12 +6,33 @@ const jsonResponse = (data, status = 200) =>
 
 export async function onRequest({ request, params, env }) {
   try {
-    const value = await nav.get("test");
-    return jsonResponse({ ok: true, sample: value ?? null });
-  } catch (error) {
-    return jsonResponse(
-      { error: "KV_ERROR", message: error?.message ?? String(error) },
-      500
+    const visitCount = await nav.get('visitCount');
+    let visitCountInt = Number(visitCount);
+    visitCountInt += 1;
+    await nav.put('visitCount', visitCountInt.toString());
+
+    const res = JSON.stringify({
+      visitCount: visitCountInt,
+    });
+
+    return new Response(res, {
+      headers: {
+        'content-type': 'application/json; charset=UTF-8',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response(
+      JSON.stringify({
+        error: "KV storage hasn't been set up for your EdgeOne Pages Project.",
+      }),
+      {
+        headers: {
+          'content-type': 'application/json; charset=UTF-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
     );
   }
 }
